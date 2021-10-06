@@ -1,0 +1,309 @@
+openapi: 3.1.0
+info:
+  title: WebStore
+  version: '1.0'
+  summary: API of a simple webstore
+  description: ''
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /posts/search:
+    get:
+      summary: Search posts
+      tags: []
+      responses:
+        '200':
+          description: Posts found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '400':
+          description: Posts not found
+      operationId: get-posts-category
+      description: 'Retrieve the posts with the matching category, location or date of posting.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: category
+        - schema:
+            type: string
+          in: query
+          name: location
+        - schema:
+            type: string
+          in: query
+          name: dateOfPosting
+    parameters: []
+  /posts:
+    post:
+      summary: Create posts
+      operationId: post-post
+      responses:
+        '200':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+              examples:
+                example-1:
+                  value:
+                    title: Auto
+                    description: peuskunnossa
+                    category: Cars
+                    location: Oulu
+                    images:
+                      image1: 'https://cdn.pixabay.com/photo/2015/12/08/00/28/car-1081742_960_720.jpg'
+                      image2: ''
+                      image3: ''
+                      image4: ''
+                    price: 1000
+                    dateOfPosting: '2019-08-24'
+                    deliveryType: Shipping
+                    seller:
+                      name: Bob
+                      email: bob.fellow@gmail.com
+        '400':
+          description: Missing Required Information
+        '401':
+          description: Unauthorized
+      description: Create a new post.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+            examples:
+              example-1:
+                value:
+                  title: Auto
+                  description: peuskunnossa
+                  category: Cars
+                  location: Oulu
+                  images:
+                    image1: 'https://cdn.pixabay.com/photo/2015/12/08/00/28/car-1081742_960_720.jpg'
+                    image2: ''
+                    image3: ''
+                    image4: ''
+                  price: 1000
+                  dateOfPosting: '2019-08-24'
+                  deliveryType: Shipping
+                  seller:
+                    name: Bob
+                    email: bob.fellow@gmail.com
+        description: ''
+      parameters: []
+      security:
+        - HTTPbasic: []
+    delete:
+      summary: Delete posts
+      operationId: delete-post
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+      description: Delete post.
+      security:
+        - HTTPbasic: []
+    put:
+      summary: Edit posts
+      operationId: put-post
+      responses:
+        '200':
+          description: Post edited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '401':
+          description: Unauthorized
+      description: Edit post.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      security:
+        - HTTPbasic: []
+    parameters: []
+  /user:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User Bob Fellow:
+                  value:
+                    id: 12
+                    firstName: Bob
+                    lastName: Fellow
+                    email: bob.fellow@gmail.com
+                    password: '123456'
+                    username: bob
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                username:
+                  type: string
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+                - username
+            examples:
+              example-1:
+                value:
+                  id: 12
+                  firstName: Bob
+                  lastName: Fellow
+                  email: bob.fellow@gmail.com
+                  password: '123456'
+                  username: bob
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+  /login:
+    post:
+      summary: Login
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      description: Login with username and password
+      security:
+        - HTTPbasic: []
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      examples:
+        - id: 12
+          firstName: Bob
+          lastName: Fellow
+          email: bob.fellow@gmail.com
+          password: '123456'
+          username: bob
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the given user.
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        username:
+          type: string
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - password
+        - username
+    Post:
+      title: Post
+      type: object
+      examples:
+        - title: Auto
+          description: peuskunnossa
+          category: Cars
+          location: Oulu
+          images:
+            image1: 'https://cdn.pixabay.com/photo/2015/12/08/00/28/car-1081742_960_720.jpg'
+            image2: ''
+            image3: ''
+            image4: ''
+          price: 1000
+          dateOfPosting: '2019-08-24'
+          deliveryType: Shipping
+          seller:
+            name: Bob
+            email: bob.fellow@gmail.com
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        location:
+          type: string
+        images:
+          type: object
+          properties:
+            image1:
+              type: string
+            image2:
+              type: string
+            image3:
+              type: string
+            image4:
+              type: string
+        price:
+          type: integer
+        dateOfPosting:
+          type: string
+          format: date
+        deliveryType:
+          type: string
+          enum:
+            - Shipping
+            - Pickup
+        seller:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+      required:
+        - title
+        - description
+        - category
+        - location
+        - images
+        - price
+        - dateOfPosting
+        - deliveryType
+        - seller
+  securitySchemes:
+    HTTPbasic:
+      type: http
+      scheme: basic
