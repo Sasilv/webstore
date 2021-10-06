@@ -2,12 +2,13 @@ const express = require('express')
 const app = express();
 const Ajv = require('ajv');
 const ajv = new Ajv();
-const port = 3000
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 const bcrypt = require('bcryptjs');
 
 let userDb = [];
+
+app.set('port', (process.env.PORT || 80));
 
 passport.use(new BasicStrategy(
     (username, password, done) => {
@@ -177,6 +178,6 @@ app.post('/signup', (req, res) => {
 
 
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+app.listen(app.get('port'), function() {
+    console.log('Node app is running on port', app.get('port'));
+});
